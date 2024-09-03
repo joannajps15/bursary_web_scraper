@@ -4,94 +4,104 @@
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
+import sys
 
 #Main method
-def main():
+def main(year, term, program, athlete):
 
-    # #initialize variables
-    # URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?affiliation=All&citizenship=All&keyword=&level=All&process=All&program=All&term=All&type=All"
-    # suffix = "&page="
-    # num = 0
-    # page = requests.get(URL) #page contains HTML content of url
+    if(athlete == "True"):
+        ath = True
+    else:
+        ath = False
 
-    # soup = BeautifulSoup(page.content, 'html.parser') #soup is a BeautifulSoup object which parses the html content from page.content
-    # soups = []
+    #initialize variables
+    URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?affiliation=All&citizenship=All&keyword=&level=All&process=All&program=All&term=All&type=All"
+    suffix = "&page="
+    num = 0
+    page = requests.get(URL) #page contains HTML content of url
 
-    # #iterate through all pages (containing bursary/award links)
-    # while (num != 32):
+    soup = BeautifulSoup(page.content, 'html.parser') #soup is a BeautifulSoup object which parses the html content from page.content
+    soups = []
 
-    #     tags = soup.find_all("h2") #to store h2 tags
+    #iterate through all pages (containing bursary/award links)
+    while (num != 32):
 
-    #     #iterate through each h2 tag and get link from it
-    #     for h2 in tags:
-    #         link = h2.find("a")
-    #         if(link != None):
-    #             newURL = (link.get('href'))
-    #             # print(newURL)
-    #             soups.append("https://uwaterloo.ca" + newURL)
+        tags = soup.find_all("h2") #to store h2 tags
 
-    #     num += 1
-    #     newSuffix = suffix + str(num)
-    #     soup = BeautifulSoup(requests.get((URL+newSuffix)).content, 'html.parser')
+        #iterate through each h2 tag and get link from it
+        for h2 in tags:
+            link = h2.find("a")
+            if(link != None):
+                newURL = (link.get('href'))
+                # print(newURL)
+                soups.append("https://uwaterloo.ca" + newURL)
+
+        num += 1
+        newSuffix = suffix + str(num)
+        soup = BeautifulSoup(requests.get((URL+newSuffix)).content, 'html.parser')
 
 
-    # # with open("Output.txt", "w") as text_file:
-    # #     for one in soups:
-    # #         text_file.write(one)
-    # #         text_file.write("\n")
-
-    # # #as of now, all links will be stored in soups
-
-    # # #iterates through all links and checks if awards apply to me based on specific criteria
-    # newSoups = []
-
-    # for one in soups:
-    #     #create beautifulsoup object and access all div's with class = field-item even
-    #     link = BeautifulSoup(requests.get(one).content, 'html.parser')
-
-    #     div = link.find_all("div", class_ = "field-item even")
-    #     check = [False, False, False]
-
-    #     for two in div:
-
-    #         if (two.string != None):
-
-    #             if("Athlet" in two.string):
-    #                 break
-
-    #             #Check Lvl
-    #             if(not(check[0]) and ("Year Two") in two.string):
-    #                 check[0] = True
-    #                 # print("lvl: ", check[0])
-                
-    #             #Check Program
-    #             if(not(check[1]) and ("Open to any program" in two.string) or "Engineering" in two.string):
-    #                 check[1] = True
-    #                 if ("→" in two.string and not "Computer Engineering" in two.string):
-    #                     check[1] = False
-    #                 # print("program: ", check[1])
-            
-    #             #Check Term
-    #             if(not(check[2]) and "Fall" in two.string):
-    #                 check[2] = True
-    #                 # print("term", check[2])
-                
-    
-            
-    #             if (check[0] and check[1] and check[2]):
-    #                 # print(two.string, ": ", ("https://uwaterloo.ca" + one))
-    #                 newSoups.append(one)
-    #                 break
-    
-    # with open("links.txt", "w") as text_file:
-    #     for one in newSoups:
+    #REMOVED: writes all soups to a text file
+    # with open("Output.txt", "w") as text_file:
+    #     for one in soups:
     #         text_file.write(one)
     #         text_file.write("\n")
 
-    # #initialize worksheet
+    #as of now, all links will be stored in soups
 
-    with open("links.txt", "r") as text_file:
-            lines = text_file.readlines()
+    # #iterates through all links and checks if awards apply to user based on specific criteria
+    newSoups = []
+
+    for one in soups:
+        #create beautifulsoup object and access all div's with class = field-item even
+        link = BeautifulSoup(requests.get(one).content, 'html.parser')
+
+        div = link.find_all("div", class_ = "field-item even")
+        check = [False, False, False]
+
+        for two in div:
+
+            if (two.string != None):
+
+                #Checks Athlete
+                if(not ath):
+                    if("Athlet" in two.string):
+                        break
+
+                #Check Lvl
+                if(not(check[0]) and year in two.string):
+                    check[0] = True
+                    # print("lvl: ", check[0])
+                
+                #Check Program
+                if(not(check[1]) and ("Open to any program" in two.string) or program in two.string):
+                    check[1] = True
+                    if ("→" in two.string and not program in two.string):
+                        check[1] = False
+                    # print("program: ", check[1])
+            
+                #Check Term
+                if(not(check[2]) and term in two.string):
+                    check[2] = True
+                    # print("term", check[2])
+                
+                #Adds website to newSoups
+                if (check[0] and check[1] and check[2]):
+                    # print(two.string, ": ", ("https://uwaterloo.ca" + one))
+                    newSoups.append(one)
+                    break
+
+    #REMOVED: writing newSoups to textfile
+    with open("links.txt", "w") as text_file:
+        for one in newSoups:
+            text_file.write(one)
+            text_file.write("\n")
+
+    #Initialize Worksheet
+
+    #REMOVED: reading links from site
+    # with open("links.txt", "r") as text_file:
+    #         lines = text_file.readlines()
 
     workbook = xlsxwriter.Workbook('test.xlsx')
     worksheet = workbook.add_worksheet()
@@ -107,7 +117,7 @@ def main():
     i = 1
     j = 0
 
-    for line in lines:
+    for line in newSoups:
 
     # #iterates through all links and filters through specific datasets using Python
     # for one in newSoups:
@@ -169,4 +179,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    year = sys.argv[1]
+    term = sys.argv[2]
+    program = sys.argv[3]
+    athlete = sys.argv[4]
+    
+    main(year, term, program, athlete)
+    
+    # main()
