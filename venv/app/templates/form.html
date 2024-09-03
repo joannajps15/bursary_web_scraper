@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="/" method='POST' novalidate>
+        {{ form.hidden_tag() }}
+        
+        <p>
+            {{ form.year.label }}<br>
+            {{ form.year(size=32) }}
+        </p>
+
+        <p>
+            {{ form.term.label }}<br>
+            {{ form.term(size=32) }}
+        </p>
+
+        <p>
+            {{ form.program.label }}<br>
+            {{ form.program(size=32) }}
+        </p>
+
+        <p>{{ form.athlete() }} {{ form.athlete.label }}</p>
+
+        <p>{{ form.submit() }}</p>
+
+    </form>
+{% endblock %}
