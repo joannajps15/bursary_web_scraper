@@ -4,18 +4,20 @@
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
-import sys
+
+import psycopg2
+from psycopg2 import Error
+
+connection = None
+cursor = None
+
 
 #Main method
-def main(year, term, program, athlete):
-
-    if(athlete == "True"):
-        ath = True
-    else:
-        ath = False
+def main():
 
     #initialize variables
-    URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?affiliation=All&citizenship=All&keyword=&level=All&process=All&program=All&term=All&type=All"
+    URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?level=All&type=All&process=All&affiliation=All&program=All&term=All&citizenship=All&keyword="
+    # URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?affiliation=All&citizenship=All&keyword=&level=All&process=All&program=All&term=All&type=All"
     suffix = "&page="
     num = 0
     page = requests.get(URL) #page contains HTML content of url
@@ -41,150 +43,135 @@ def main(year, term, program, athlete):
         soup = BeautifulSoup(requests.get((URL+newSuffix)).content, 'html.parser')
 
 
-    #REMOVED: writes all soups to a text file
-    # with open("Output.txt", "w") as text_file:
-    #     for one in soups:
-    #         text_file.write(one)
-    #         text_file.write("\n")
-
-    #as of now, all links will be stored in soups
-
-    # #iterates through all links and checks if awards apply to user based on specific criteria
-    newSoups = []
-
-    for one in soups:
-        #create beautifulsoup object and access all div's with class = field-item even
-        link = BeautifulSoup(requests.get(one).content, 'html.parser')
-
-        div = link.find_all("div", class_ = "field-item even")
-        check = [False, False, False]
-
-        for two in div:
-
-            if (two.string != None):
-
-                #Checks Athlete
-                if(not ath):
-                    if("Athlet" in two.string):
-                        break
-
-                #Check Lvl
-                if(not(check[0]) and year in two.string):
-                    check[0] = True
-                    # print("lvl: ", check[0])
-                
-                #Check Program
-                if(not(check[1]) and ("Open to any program" in two.string) or program in two.string):
-                    check[1] = True
-                    if ("→" in two.string and not program in two.string):
-                        check[1] = False
-                    # print("program: ", check[1])
-            
-                #Check Term
-                if(not(check[2]) and term in two.string):
-                    check[2] = True
-                    # print("term", check[2])
-                
-                #Adds website to newSoups
-                if (check[0] and check[1] and check[2]):
-                    # print(two.string, ": ", ("https://uwaterloo.ca" + one))
-                    newSoups.append(one)
-                    break
-
-    #REMOVED: writing newSoups to textfile
-    with open("links.txt", "w") as text_file:
-        for one in newSoups:
+    with open("Output.txt", "w") as text_file:
+        for one in soups:
             text_file.write(one)
             text_file.write("\n")
 
-    #Initialize Worksheet
+    # #as of now, all links will be stored in soups
 
-    #REMOVED: reading links from site
-    # with open("links.txt", "r") as text_file:
-    #         lines = text_file.readlines()
+    #iterates through all links and checks if awards apply to user based on specific criteria
 
-    workbook = xlsxwriter.Workbook('test.xlsx')
-    worksheet = workbook.add_worksheet()
-    worksheet.set_column_pixels(0, 4, 200)
+    connection = None
+    cursor = None
 
-    worksheet.write("A1", "Link")
-    worksheet.write("B1", "Name")
-    worksheet.write("C1", "Award Description")
-    worksheet.write("D1", "Eligibility Criteria")
-    worksheet.write("E1", "Value Descrption")
-    worksheet.write("F1", "Selection Process")
+    try:
+        #connect to db
+        connection = psycopg2.connect(user="postgres",
+                                    password="postGres#321",
+                                    host="127.0.0.1",
+                                    port="5432",
+                                    database="web_scraper_db")    
 
-    i = 1
-    j = 0
+        cursor = connection.cursor()
 
-    for line in newSoups:
 
-    # #iterates through all links and filters through specific datasets using Python
-    # for one in newSoups:
+        for one in soups:
+            #create beautifulsoup object and access all div's with class = field-item even
+            link = BeautifulSoup(requests.get(one).content, 'html.parser')
+            
+            data = [0] * 11
+            progs = [0] * 3
+            # 0 : links
+            data[0] = one
+            # 1 : award_name
+            data[1] = link.find(class_="uw-site--title").contents[1].string
 
-        #Link
-        worksheet.write(i, j, line)
+            div = [i.string for i in link.find_all("div", class_= "field-label")]
+            vals = [i.contents[0].string for i in link.find_all("div", class_="field-item even")]
 
-        #process in Excel sheet!!
-        
-        line2 = line.strip()
-        link = BeautifulSoup(requests.get(line2).content, 'html.parser')
-
-        #Title
-        title = link.find("div", class_ = "uw-site--title")
-        h = title.find("h1")
-        if(h != None):
-            # print(h.string, "\n")
-            worksheet.write(i,(j+1), h.string)
-
-        # #Award Desc
-        desc = link.find_all("p")
-        # span = link.find('span')
-        for text in desc:
-            if text.string != None:
-                # print(all.string, "\n")
-                worksheet.write(i, (j+2), text.string)
-                break
-
-        # #Eligibility
-
-        #eligibility criteria dont seem to be working....
-        elig = link.find_all("li")
-        words = ""
-        for point in elig:
-            #Eligibility
-            if point.find("a") == "None" and point.string != None:
-                words = words + "; " + point.string 
-        
-        worksheet.write(i, (j+3), words)
-        # # print(words)
-
-        div = link.find_all("div", class_ = "field-item even")
-
-        for two in div:
-            if two.string != None:
-                #Value 
-                if "$" in two.string or "varies" in two.string:
-                    worksheet.write(i, (j+4), two.string)
-                    # print(two.string)
+            for i in range(len(div)):
+                match (div[i]):
+                    # 2 : level
+                    case s if s.startswith("Level:"):
+                        data[2] = vals[i]
                 
-                #Selection
-                if "pplication" in two.string:
-                    worksheet.write(i, (j+5), two.string)
-                    # print(two.string)
+                    # 3 : award_type
+                    case s if s.startswith("Award type:"):
+                        data[3] = vals[i]
+                
+                    # 4 : selection
+                    case s if s.startswith("Selection process:"):
+                        data[4] = vals[i]
 
-        i+=1
+                    # 5 : affiliation
+                    case s if s.startswith("Affiliation:"):
+                        data[5] = vals[i]
 
-    workbook.close()
+                    # 6 : faculty & program
+                    case s if s.startswith("Program:"):
+                        # create an array
+                        # faculty, program
+                        if ('→' in vals[i]):                       
+                            parts = vals[i].split('→')
+                            parts.insert(1, parts[1].split(','))
+                            # we want faculty - program, faculty - program
+                            progs = parts
+                        else:
+                            progs = vals[i]
+
+                    # 7 : term
+                    case s if s.startswith("Term:"):
+                        data[6] = vals[i]
+
+                    # 8 : citizen_status
+                    case s if s.startswith("Citizenship:"):
+                        data[7] = vals[i]
+
+                    # 9 : value_desc
+                    case s if s.startswith("Value description:"):
+                        data[8] = vals[i]
+
+                    # 10 : award_desc
+                    case s if s.startswith("Award description:"):
+                        data[9] = vals[i]
+
+                    # 11 : eligibility_selection
+                    case s if s.startswith("Eligibility & selection criteria:"):
+                        data[10] = vals[i]
+                
+                    case s if s.startswith("Application details:"):
+                        data[10] = vals[i]
+
+            print(data)
+            #insert into tables!
+            insert_term_table = '''
+                INSERT INTO results (LINK, AWARD_NAME, LEVEL, AWARD_TYPE, SELECTION, AFFILIATION, TERM, CITIZEN_STATUS, VALUE_DESC, AWARD_DESC, ELIGIBILITY_SELECTION) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            '''
+            cursor.execute(insert_term_table, data)
+            connection.commit()
+
+            # insert_term_table = '''
+            #     SELECT PROGRAM FROM results WHERE AWARD_NAME = (%s)   
+            # '''
+            # cursor.execute(insert_term_table, data[0])
+            # rows = cursor.fetchall()
+            # print(rows)
+            # progs.insert(0,rows[0]) #given rows is likely a list, just the first element containing the index?
+
+            # #now insert faculties and programs into award_program table
+            # for i in range(len())
+            # insert_term_table = '''
+            #     INSERT INTO award_program (AWARD_ID, PROGRAM, FACULTY) 
+            #     VALUES (%s)
+            # '''
+            # cursor.executemany(insert_term_table, data)
+            # connection.commit()
+
+
+            break
+
+
+
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
 
 
 if __name__ == "__main__":
-
-    year = sys.argv[1]
-    term = sys.argv[2]
-    program = sys.argv[3]
-    athlete = sys.argv[4]
-    
-    main(year, term, program, athlete)
-    
-    # main()
+    main()
