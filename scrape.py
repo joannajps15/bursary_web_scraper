@@ -70,8 +70,8 @@ def main():
             #create beautifulsoup object and access all div's with class = field-item even
             link = BeautifulSoup(requests.get(one).content, 'html.parser')
             
-            data = [0] * 11
-            progs = [0] * 3
+            data = [None] * 12
+
             # 0 : links
             data[0] = one
             # 1 : award_name
@@ -79,89 +79,83 @@ def main():
 
             div = [i.string for i in link.find_all("div", class_= "field-label")]
             vals = [i.contents[0].string for i in link.find_all("div", class_="field-item even")]
+            vals = [i for i in vals if i != '\n']
 
             for i in range(len(div)):
                 match (div[i]):
                     # 2 : level
-                    case s if s.startswith("Level:"):
-                        data[2] = vals[i]
+                    case s if s.startswith("Level"):
+                        lvl = vals[i].split(',') # returns a list of all levels
+                        data[2] = [i.strip() for i in lvl]
                 
                     # 3 : award_type
                     case s if s.startswith("Award type:"):
-                        data[3] = vals[i]
+                        awd_type = vals[i].split(',')
+                        data[3] =  [i.strip() for i in awd_type]
                 
                     # 4 : selection
                     case s if s.startswith("Selection process:"):
-                        data[4] = vals[i]
+                        sel = vals[i].split(',')
+                        data[4] =  [i.strip() for i in sel]
 
                     # 5 : affiliation
                     case s if s.startswith("Affiliation:"):
-                        data[5] = vals[i]
+                        affil = vals[i].split(',')
+                        data[5] = [i.strip() for i in affil]
 
-                    # 6 : faculty & program
-                    case s if s.startswith("Program:"):
-                        # create an array
-                        # faculty, program
-                        if ('→' in vals[i]):                       
-                            parts = vals[i].split('→')
-                            parts.insert(1, parts[1].split(','))
-                            # we want faculty - program, faculty - program
-                            progs = parts
+                    # 6 : program
+                    case s if s.startswith("Program"):
+                        temp = []
+                        if (';' in vals[i]):
+                            temp2 = [j.strip() for j in vals[i].split(';')]
+                            for j in temp2:
+                                temp += (j.split(','))
+                            for j in range(len(temp)):
+                                if '→' in temp[j]:
+                                    temp[j] = temp[j].split('→', 1)[1]
+                            data[6] = temp
                         else:
-                            progs = vals[i]
-
+                            if '→' in vals[i]:
+                                vals[i] = vals[i].split('→',1)[1]
+                            data[6] = [vals[i]]
+                        
                     # 7 : term
                     case s if s.startswith("Term:"):
-                        data[6] = vals[i]
-
+                        term = vals[i].split(',')
+                        data[7] = [i.strip() for i in term]
+                        
                     # 8 : citizen_status
                     case s if s.startswith("Citizenship:"):
-                        data[7] = vals[i]
+                        if ',' in vals[i]:
+                            data[8] = 'both'
+                        else:
+                            data[8] = vals[i]
 
                     # 9 : value_desc
-                    case s if s.startswith("Value description:"):
-                        data[8] = vals[i]
+                    case s if s.startswith("Value"):
+                        data[9] = vals[i]
 
                     # 10 : award_desc
                     case s if s.startswith("Award description:"):
-                        data[9] = vals[i]
+                        data[10] = vals[i]
 
                     # 11 : eligibility_selection
                     case s if s.startswith("Eligibility & selection criteria:"):
-                        data[10] = vals[i]
+                        data[11] = vals[i]
                 
                     case s if s.startswith("Application details:"):
-                        data[10] = vals[i]
+                        data[11] = vals[i]
 
+            #insert into tables
             print(data)
-            #insert into tables!
             insert_term_table = '''
-                INSERT INTO results (LINK, AWARD_NAME, LEVEL, AWARD_TYPE, SELECTION, AFFILIATION, TERM, CITIZEN_STATUS, VALUE_DESC, AWARD_DESC, ELIGIBILITY_SELECTION) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO results (LINK, AWARD_NAME, LEVEL, AWARD_TYPE, SELECTION, AFFILIATION, PROGRAM, TERM, CITIZEN_STATUS, VALUE_DESC, AWARD_DESC, ELIGIBILITY_SELECTION) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             '''
             cursor.execute(insert_term_table, data)
             connection.commit()
 
-            # insert_term_table = '''
-            #     SELECT PROGRAM FROM results WHERE AWARD_NAME = (%s)   
-            # '''
-            # cursor.execute(insert_term_table, data[0])
-            # rows = cursor.fetchall()
-            # print(rows)
-            # progs.insert(0,rows[0]) #given rows is likely a list, just the first element containing the index?
-
-            # #now insert faculties and programs into award_program table
-            # for i in range(len())
-            # insert_term_table = '''
-            #     INSERT INTO award_program (AWARD_ID, PROGRAM, FACULTY) 
-            #     VALUES (%s)
-            # '''
-            # cursor.executemany(insert_term_table, data)
-            # connection.commit()
-
-
-            break
-
+            # break
 
 
     except (Exception, Error) as error:

@@ -30,14 +30,14 @@ try:
     connection.commit()
 
     award_types = [
-        ('scholarships/awards',),
-        ('financial Need awards/bursaries',),
-        ('athletic awards',),
-        ('entrepreneurial awards',),
-        ('international experience awards',),
-        ('other travel funding',),
-        ('research awards',),
-        ('medals/prizes',),
+        ('Scholarships/awards',),
+        ('Financial need awards/bursaries',),
+        ('Athletic awards',),
+        ('Entrepreneurial awards',),
+        ('International experience awards',),
+        ('Other travel funding',),
+        ('Research awards',),
+        ('Medals/Prizes',),
     ]
 
     insert_award_type_table = '''
@@ -63,10 +63,10 @@ try:
     connection.commit()
 
     levels = [
-        ('year one',),
-        ('year two',),
-        ('year three',),
-        ('year four',),
+        ('Year One',),
+        ('Year Two',),
+        ('Year Three',),
+        ('Year Four',),
     ]
 
     insert_level_table = '''
@@ -85,14 +85,14 @@ try:
 
     create_selection_table = '''
         CREATE TABLE IF NOT EXISTS selection (
-            SELECTION VARCHAR(50) PRIMARY KEY
+            SELECTION VARCHAR(100) PRIMARY KEY
         );
     '''
     cursor.execute(create_selection_table)
     connection.commit()
 
     sel = [
-        ('Students considered automatically - no application',),
+        ('Students considered automatically - no application.',),
         ('Application required',),
     ]
 
@@ -119,14 +119,14 @@ try:
     connection.commit()
 
     affil = [
-        ('black',),
-        ('indigenous',),
-        ('mature learning',),
-        ('ontario first generation',),
-        ('part-time learner',),
-        ('refugee',),
-        ('varsity athlete',),
-        ('women',),
+        ('Black',),
+        ('Indigenous',),
+        ('Mature learning',),
+        ('Ontario first generation',),
+        ('Part-time learner',),
+        ('Refugee',),
+        ('Varsity athlete',),
+        ('Woman',),
     ]
 
     insert_affiliation_table = '''
@@ -152,12 +152,12 @@ try:
     connection.commit()
 
     facs = [
-        ('arts',),
-        ('engineering',),
-        ('environment',),
-        ('health',),
-        ('mathematics',),
-        ('science',),
+        ('Arts',),
+        ('Engineering',),
+        ('Environment',),
+        ('Health',),
+        ('Mathematics',),
+        ('Science',),
     ]
 
     insert_faculty_table = '''
@@ -187,101 +187,101 @@ try:
     connection.commit()
 
     programs = [
-        ('open to any program',None),
-        ('accounting and financial mgmt', 'arts'),
-        ('anthropology', 'arts'),
-        ('arts and business', 'arts'),
-        ('classical studies', 'arts'),
-        ('communication arts','arts'),
-        ('economics', 'arts'),
-        ('english language and literature', 'arts'),
-        ('fine arts', 'arts'),
-        ('french studies', 'arts'),
-        ('gender and social justice', 'arts'),
-        ('germanic and slavic studies', 'arts'),
-        ('global business and digital arts', 'arts'),
-        ('history', 'arts'),
-        ('international trade (minor)', 'arts'),
-        ('liberal studies', 'arts'),
-        ('medieval studies', 'arts'),
-        ('music', 'arts'),
-        ('peace and conflict studies', 'arts'),
-        ('philosophy', 'arts'),
-        ('political science', 'arts'),
-        ('psychology','arts'),
-        ('religious studies','arts'),
-        ('sexuality, relationships, and families','arts'),
-        ('social development studies','arts'),
-        ('sociology and legal studies','arts'),
-        ('spanish and latin american studies','arts'),
-        ('sustainability and financial management','arts'),
-        ('architecture','engineering'),
-        ('architectural engineering','engineering'),
-        ('biomedical engineering','engineering'),
-        ('chemical engineering','engineering'),
-        ('civil engineering','engineering'),
-        ('computer engineering','engineering'),
-        ('electrical engineering','engineering'),
-        ('environmental engineering','engineering'),
-        ('geological engineering','engineering'),
-        ('management engineering','engineering'),
-        ('mechanical engineering','engineering'),
-        ('mechatronics engineering','engineering'),
-        ('nanotechnology engineering','engineering'),
-        ('systems design engineering','engineering'),
-        ('software engineering','engineering'),
-        ('climate and environmental change','environment'),
-        ('environment and business','environment'),
-        ('environment, resources and sustainability','environment'),
-        ('geography and environmental mgmt','environment'),
-        ('geography and aviation','environment'),
-        ('geomatics','environment'),
-        ('international development','environment'),
-        ('knowledge integration','environment'),
-        ('planning','environment'),
-        ('kinesiology','health'),
-        ('public health and health sciences','health'),
-        ('recreation and leisure studies','health'),
-        ('computing and financial mgmt','mathematics'),
-        ('actuarial science','mathematics'),
-        ('applied mathematics','mathematics'),
-        ('bioinformatics','mathematics'),
-        ('business and cs (double degree)','mathematics'),
-        ('business and math (double degree)','mathematics'),
-        ('combinatorics and optimization','mathematics'),
-        ('computational mathematics','mathematics'),
-        ('computer science','mathematics'),
-        ('data science','mathematics'),
-        ('information technology mgmt','mathematics'),
-        ('math/fin.analysis and risk mgmt','mathematics'),
-        ('mathematical economics','mathematics'),
-        ('mathematical finance','mathematics'),
-        ('mathematical optimization','mathematics'),
-        ('mathematical physics','mathematics'),
-        ('mathematics','mathematics'),
-        ('mathematics/cpa','mathematics'),
-        ('mathematics/business admin','mathematics'),
-        ('mathematics/teaching','mathematics'),
-        ('pure mathematics','mathematics'),
-        ('scientific computation/applied mathematics','mathematics'),
-        ('statistics','mathematics'),
-        ('biochemistry','science'),
-        ('biology','science'),
-        ('biomedical sciences','science'),
-        ('biotechnology/cpa','science'),
-        ('biotechnology/economics','science'),
-        ('chemistry','science'),
-        ('earth and environmental sciences','science'),
-        ('materials and nanosciences','science'),
-        ('mathematical physics','science'),
-        ('medicinal chemistry','science'),
-        ('optometry','science'),
-        ('pharmacy','science'),
-        ('physics and astronomy','science'),
-        ('psychology','science'),
-        ('science','science'),
-        ('science and business','science'),
-        ('science and aviation','science'),
+        ('Open to any program',None),
+        ('ccounting and Financial Mgmt', 'Arts'),
+        ('Anthropology', 'Arts'),
+        ('Arts and Business', 'Arts'),
+        ('Classical Studies', 'Arts'),
+        ('Communication Arts','Arts'),
+        ('Economics', 'Arts'),
+        ('English Language and Literature', 'Arts'),
+        ('Fine Arts', 'Arts'),
+        ('French Studies', 'Arts'),
+        ('Gender and Social Justice', 'Arts'),
+        ('Germanic and Slavic Studies', 'Arts'),
+        ('Global Business and Digital Arts', 'Arts'),
+        ('History', 'Arts'),
+        ('International Trade (minor)', 'Arts'),
+        ('Liberal Studies', 'Arts'),
+        ('Medieval Studies', 'Arts'),
+        ('Music', 'Arts'),
+        ('Peace and Conflict Studies', 'Arts'),
+        ('Philosophy', 'Arts'),
+        ('Political Science', 'Arts'),
+        ('Psychology','Arts'),
+        ('Religious Studies','Arts'),
+        ('Sexuality, Relationships, and Families','Arts'),
+        ('Social Development Studies','Arts'),
+        ('Sociology and Legal Studies','Arts'),
+        ('Spanish and Latin American Studies','Arts'),
+        ('Sustainability and Financial Management','Arts'),
+        ('Architecture','Engineering'),
+        ('Architectural Engineering','Engineering'),
+        ('Biomedical Engineering','Engineering'),
+        ('Chemical Engineering','Engineering'),
+        ('Civil Engineering','Engineering'),
+        ('Computer Engineering','Engineering'),
+        ('Electrical Engineering','Engineering'),
+        ('Environmental Engineering','Engineering'),
+        ('Geological Engineering','Engineering'),
+        ('Management Engineering','Engineering'),
+        ('Mechanical Engineering','Engineering'),
+        ('Mechatronics Engineering','Engineering'),
+        ('Nanotechnology Engineering','Engineering'),
+        ('Systems Design Engineering','Engineering'),
+        ('software Engineering','Engineering'),
+        ('Climate and Environmental Change','Environment'),
+        ('Environment and Business','Environment'),
+        ('Environment, Resources and Sustainability','Environment'),
+        ('Geography and Environmental Mgmt','Environment'),
+        ('Geography and Aviation','Environment'),
+        ('Geomatics','Environment'),
+        ('International Development','Environment'),
+        ('Knowledge Integration','Environment'),
+        ('Planning','Environment'),
+        ('Kinesiology','Health'),
+        ('Public Health and Health Sciences','Health'),
+        ('Recreation and Leisure Studies','Health'),
+        ('Computing and Financial Mgmt','Mathematics'),
+        ('Actuarial Science','Mathematics'),
+        ('Applied Mathematics','Mathematics'),
+        ('Bioinformatics','Mathematics'),
+        ('Business and CS (Double Degree)','Mathematics'),
+        ('Business and Math (Double Degree)','Mathematics'),
+        ('Combinatorics and Optimization','Mathematics'),
+        ('Computational Mathematics','Mathematics'),
+        ('Computer Science','Mathematics'),
+        ('Data Science','Mathematics'),
+        ('Information Technology Mgmt','Mathematics'),
+        ('Math/Fin.Analysis and Risk Mgmt','Mathematics'),
+        ('Mathematical Economics','Mathematics'),
+        ('Mathematical Finance','Mathematics'),
+        ('Mathematical Optimization','Mathematics'),
+        ('Mathematical Physics','Mathematics'),
+        ('Mathematics','Mathematics'),
+        ('Mathematics/CPA','Mathematics'),
+        ('Mathematics/Business Admin','Mathematics'),
+        ('Mathematics/Teaching','Mathematics'),
+        ('Pure Mathematics','Mathematics'),
+        ('Scientific Computation/Applied Mathematics','Mathematics'),
+        ('Statistics','Mathematics'),
+        ('Biochemistry','Science'),
+        ('Biology','Science'),
+        ('Biomedical Sciences','Science'),
+        ('Biotechnology/CPA','Science'),
+        ('Biotechnology/Economics','Science'),
+        ('Chemistry','Science'),
+        ('Earth and Environmental Sciences','Science'),
+        ('Materials and Nanosciences','Science'),
+        ('Mathematical Physics','Science'),
+        ('Medicinal Chemistry','Science'),
+        ('Optometry','Science'),
+        ('Pharmacy','Science'),
+        ('Physics and Astronomy','Science'),
+        ('Psychology','Science'),
+        ('Science','Science'),
+        ('Science and Business','Science'),
+        ('Science and Aviation','Science'),
     ]
 
     insert_program_table = '''
@@ -308,9 +308,9 @@ try:
     connection.commit()
 
     terms = [
-        ('winter',),
-        ('spring',),
-        ('fall',),
+        ('Winter',),
+        ('Spring',),
+        ('Fall',),
     ]
 
     insert_term_table = '''
@@ -336,8 +336,9 @@ try:
     connection.commit()
 
     statuses = [
-        ('canadian citizen/permanent resident',),
-        ('internationalstudy permit student',),
+        ('Canadian citizen/permanent resident',),
+        ('International/study permit student',),
+        ('both',),
     ]
 
     insert_citizen_table = '''
@@ -356,34 +357,19 @@ try:
 
     create_results_table = '''
         CREATE TABLE IF NOT EXISTS results (
-            LINK VARCHAR(100) NOT NULL,
-            AWARD_NAME VARCHAR(100) PRIMARY KEY,
-            LEVEL VARCHAR(100),
-            AWARD_TYPE VARCHAR(100),
-            SELECTION VARCHAR(100),
-            AFFILIATION VARCHAR(100),
-            PROGRAM SERIAL UNIQUE, 
-            TERM VARCHAR(100),
-            CITIZEN_STATUS VARCHAR(100),
-            VALUE_DESC VARCHAR(100),
-            AWARD_DESC VARCHAR(1000),
-            ELIGIBILITY_SELECTION VARCHAR(500),
-
-            FOREIGN KEY (LEVEL) REFERENCES level(LEVEL)
-                ON DELETE SET NULL,
-
-            FOREIGN KEY (AWARD_TYPE) REFERENCES award_type(AWARD_TYPE)
-                ON DELETE SET NULL,
-
-            FOREIGN KEY (SELECTION) REFERENCES selection(SELECTION)
-                ON DELETE SET NULL,
-
-            FOREIGN KEY (AFFILIATION) REFERENCES affiliation(AFFILIATION)
-                ON DELETE SET NULL,
-
-            FOREIGN KEY (TERM) REFERENCES term(TERM)
-                ON DELETE SET NULL,
-
+            LINK VARCHAR(250) NOT NULL,
+            AWARD_NAME VARCHAR(100),
+            LEVEL TEXT[],
+            AWARD_TYPE TEXT[],     
+            SELECTION TEXT[],
+            AFFILIATION TEXT[],
+            PROGRAM TEXT[], 
+            TERM TEXT[],
+            CITIZEN_STATUS VARCHAR(50),
+            VALUE_DESC TEXT,
+            AWARD_DESC TEXT,
+            ELIGIBILITY_SELECTION TEXT,
+            PRIMARY KEY (LINK, AWARD_NAME),
             FOREIGN KEY (CITIZEN_STATUS) REFERENCES citizenship(CITIZEN_STATUS)
                 ON DELETE SET NULL
         );
@@ -397,28 +383,6 @@ try:
     '''
     cursor.execute(create_award_program_table)
     connection.commit()
-
-    create_award_program_table = '''
-        CREATE TABLE IF NOT EXISTS award_program (
-            AWARD_ID INT,
-            PROGRAM VARCHAR(50),
-            FACULTY VARCHAR(50),
-            PRIMARY KEY (AWARD_ID, PROGRAM, FACULTY),
-            FOREIGN KEY (AWARD_ID) REFERENCES results(PROGRAM)
-                ON UPDATE CASCADE
-                ON DELETE SET NULL,
-            FOREIGN KEY (PROGRAM) REFERENCES program(PROGRAM)
-                ON UPDATE CASCADE
-                ON DELETE SET NULL,
-            FOREIGN KEY (FACULTY) REFERENCES faculty(FACULTY)
-                ON UPDATE CASCADE
-                ON DELETE SET NULL
-        );
-    '''
-    
-    cursor.execute(create_award_program_table)
-    connection.commit()     
-
 
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
