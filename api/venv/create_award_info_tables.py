@@ -1,0 +1,119 @@
+def create_award_info_tables(cursor)->int:
+        #PROGRAM--------------------------------------------------
+        drop_program_table = '''
+            DROP TABLE IF EXISTS program CASCADE;
+        '''
+        cursor.execute(drop_program_table)
+
+        create_program_table = '''
+            CREATE TABLE IF NOT EXISTS program (
+                PROGRAM VARCHAR(50) PRIMARY KEY,
+                FACULTY VARCHAR(50)
+            );
+        '''
+        cursor.execute(create_program_table)
+
+        programs = [
+            ('Open to any program',None),
+            ('Accounting and Financial Mgmt', 'Arts'),
+            ('Anthropology', 'Arts'),
+            ('Arts and Business', 'Arts'),
+            ('Classical Studies', 'Arts'),
+            ('Communication Arts','Arts'),
+            ('Economics', 'Arts'),
+            ('English Language and Literature', 'Arts'),
+            ('Fine Arts', 'Arts'),
+            ('French Studies', 'Arts'),
+            ('Gender and Social Justice', 'Arts'),
+            ('Germanic and Slavic Studies', 'Arts'),
+            ('Global Business and Digital Arts', 'Arts'),
+            ('History', 'Arts'),
+            ('International Trade (minor)', 'Arts'),
+            ('Liberal Studies', 'Arts'),
+            ('Medieval Studies', 'Arts'),
+            ('Music', 'Arts'),
+            ('Peace and Conflict Studies', 'Arts'),
+            ('Philosophy', 'Arts'),
+            ('Political Science', 'Arts'),
+            ('Psychology','Arts'),
+            ('Religious Studies','Arts'),
+            ('Sexuality, Relationships, and Families','Arts'),
+            ('Social Development Studies','Arts'),
+            ('Sociology and Legal Studies','Arts'),
+            ('Spanish and Latin American Studies','Arts'),
+            ('Sustainability and Financial Management','Arts'),
+            ('Architecture','Engineering'),
+            ('Architectural Engineering','Engineering'),
+            ('Biomedical Engineering','Engineering'),
+            ('Chemical Engineering','Engineering'),
+            ('Civil Engineering','Engineering'),
+            ('Computer Engineering','Engineering'),
+            ('Electrical Engineering','Engineering'),
+            ('Environmental Engineering','Engineering'),
+            ('Geological Engineering','Engineering'),
+            ('Management Engineering','Engineering'),
+            ('Mechanical Engineering','Engineering'),
+            ('Mechatronics Engineering','Engineering'),
+            ('Nanotechnology Engineering','Engineering'),
+            ('Systems Design Engineering','Engineering'),
+            ('software Engineering','Engineering'),
+            ('Climate and Environmental Change','Environment'),
+            ('Environment and Business','Environment'),
+            ('Environment, Resources and Sustainability','Environment'),
+            ('Geography and Environmental Mgmt','Environment'),
+            ('Geography and Aviation','Environment'),
+            ('Geomatics','Environment'),
+            ('International Development','Environment'),
+            ('Knowledge Integration','Environment'),
+            ('Planning','Environment'),
+            ('Kinesiology','Health'),
+            ('Public Health and Health Sciences','Health'),
+            ('Recreation and Leisure Studies','Health'),
+            ('Computing and Financial Mgmt','Mathematics'),
+            ('Actuarial Science','Mathematics'),
+            ('Applied Mathematics','Mathematics'),
+            ('Bioinformatics','Mathematics'),
+            ('Business and CS (Double Degree)','Mathematics'),
+            ('Business and Math (Double Degree)','Mathematics'),
+            ('Combinatorics and Optimization','Mathematics'),
+            ('Computational Mathematics','Mathematics'),
+            ('Computer Science','Mathematics'),
+            ('Data Science','Mathematics'),
+            ('Information Technology Mgmt','Mathematics'),
+            ('Math/Fin.Analysis and Risk Mgmt','Mathematics'),
+            ('Mathematical Economics','Mathematics'),
+            ('Mathematical Finance','Mathematics'),
+            ('Mathematical Optimization','Mathematics'),
+            ('Mathematical Physics','Mathematics'),
+            ('Mathematics','Mathematics'),
+            ('Mathematics/CPA','Mathematics'),
+            ('Mathematics/Business Admin','Mathematics'),
+            ('Mathematics/Teaching','Mathematics'),
+            ('Pure Mathematics','Mathematics'),
+            ('Scientific Computation/Applied Mathematics','Mathematics'),
+            ('Statistics','Mathematics'),
+            ('Biochemistry','Science'),
+            ('Biology','Science'),
+            ('Biomedical Sciences','Science'),
+            ('Biotechnology/CPA','Science'),
+            ('Biotechnology/Economics','Science'),
+            ('Chemistry','Science'),
+            ('Earth and Environmental Sciences','Science'),
+            ('Materials and Nanosciences','Science'),
+            ('Mathematical Physics','Science'),
+            ('Medicinal Chemistry','Science'),
+            ('Optometry','Science'),
+            ('Pharmacy','Science'),
+            ('Physics and Astronomy','Science'),
+            ('Psychology','Science'),
+            ('Science','Science'),
+            ('Science and Business','Science'),
+            ('Science and Aviation','Science'),
+        ]
+
+        insert_program_table = '''
+            INSERT INTO program (PROGRAM, FACULTY) 
+            VALUES (%s, %s)
+            ON CONFLICT (PROGRAM) DO NOTHING
+        '''
+        cursor.executemany(insert_program_table, programs)

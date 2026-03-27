@@ -1,21 +1,38 @@
-#import necessary library
-
 #Libraries
 import requests
 from bs4 import BeautifulSoup
-# import xlsxwriter
 
 import psycopg2
 from psycopg2 import Error
 
+from flask import abort
+
+from create_scrape_result_tables import *
+from create_award_info_tables import *
+
+import aiohttp
+import asyncio
+
+
 connection = None
 cursor = None
 
-def scrape() -> int:
+# fetch all 700 pages concurrently
+async def fetch_all(urls):
+    async with aiohttp.ClientSession() as session:
+        async def fetch(url):
+            async with session.get(url) as response:
+                html = await response.read()
+                return BeautifulSoup(html, 'html.parser')
+        
+        tasks = [fetch(url) for url in urls]
+        return await asyncio.gather(*tasks)
+
+
+def scrape() -> str:
 
     #initialize variables
     URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?level=All&type=All&process=All&affiliation=All&program=All&term=All&citizenship=All&keyword="
-    # URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?affiliation=All&citizenship=All&keyword=&level=All&process=All&program=All&term=All&type=All"
     suffix = "&page="
     num = 0
     page = requests.get(URL) #page contains HTML content of url
@@ -33,7 +50,6 @@ def scrape() -> int:
             link = h2.find("a")
             if(link != None):
                 newURL = (link.get('href'))
-                # print(newURL)
                 soups.append("https://uwaterloo.ca" + newURL)
 
         num += 1
@@ -41,6 +57,9 @@ def scrape() -> int:
         soup = BeautifulSoup(requests.get((URL+newSuffix)).content, 'html.parser')
 
     #iterates through all links and checks if awards apply to user based on specific criteria
+    
+    #fetch all 700 pages concurrently
+    parsed_pages = asyncio.run(fetch_all(soups))  # all 700 fetched concurrently
 
     connection = None
     cursor = None
@@ -55,105 +74,158 @@ def scrape() -> int:
 
         cursor = connection.cursor()
 
+        #create tables
+        if not (create_award_info_tables(cursor) and create_scrape_result_tables(cursor)):
+            abort(500)
 
-        for one in soups:
-            #create beautifulsoup object and access all div's with class = field-item even
-            link = BeautifulSoup(requests.get(one).content, 'html.parser')
+        for (one, link) in zip(soups, parsed_pages):
+            # #create beautifulsoup object and access all div's with class = field-item even
+            # link = BeautifulSoup(requests.get(one).content, 'html.parser')
             
-            data = [None] * 12
+            award_info_data = [None] * 7
+            award_level_data = []
+            award_type_data = []
+            award_affiliation_data = []
+            award_program_data = []
+            award_term_data = []
 
-            # 0 : links
-            data[0] = one
-            # 1 : award_name
-            data[1] = link.find(class_="uw-site--title").contents[1].string
+            # award_info_data_0 : award_name
+            award_info_data[0] = link.find(class_="uw-site--title").contents[1].string
+
+            # award_info_data_1 : links
+            award_info_data[1] = one
 
             div = [i.string for i in link.find_all("div", class_= "field-label")]
-            vals = [i.contents[0].string for i in link.find_all("div", class_="field-item even")]
+            raw_divs = link.find_all("div", class_="field-item even")
+            vals = [i.contents[0].string for i in raw_divs]
+            # vals = [i.contents[0].string for i in link.find_all("div", class_="field-item even")]
             vals = [i for i in vals if i != '\n']
 
             for i in range(len(div)):
                 match (div[i]):
-                    # 2 : level
+                    # award_level_data : level
                     case s if s.startswith("Level"):
-                        lvl = vals[i].split(',') # returns a list of all levels
-                        data[2] = [i.strip() for i in lvl]
+                        award_level_data = [j.strip() for j in vals[i].split(',')]
                 
-                    # 3 : award_type
+                    # award_type_data : award_type
                     case s if s.startswith("Award type:"):
-                        awd_type = vals[i].split(',')
-                        data[3] =  [i.strip() for i in awd_type]
+                        award_type_data =  [j.strip() for j in vals[i].split(',')]
                 
-                    # 4 : selection
+                    # award_info_data_2 : selection
                     case s if s.startswith("Selection process:"):
-                        sel = vals[i].split(',')
-                        data[4] =  [i.strip() for i in sel]
+                        award_info_data[2] = vals[i].strip()
 
-                    # 5 : affiliation
+                    # award_affiliation_data : affiliation
                     case s if s.startswith("Affiliation:"):
-                        affil = vals[i].split(',')
-                        data[5] = [i.strip() for i in affil]
+                        if vals[i]:
+                            award_affiliation_data = [j.strip() for j in vals[i].split(',')]
 
-                    # 6 : program
+                    # award_program_data : program
                     case s if s.startswith("Program"):
                         temp = []
                         if (';' in vals[i]):
-                            temp2 = [j.strip() for j in vals[i].split(';')]
+                            temp2 = [j.strip() for j in vals[i].split(';')] #split btw faculties
                             for j in temp2:
-                                temp += (j.split(','))
+                                temp += (j.split(',')) #split btw programs
                             for j in range(len(temp)):
                                 if '→' in temp[j]:
-                                    temp[j] = temp[j].split('→', 1)[1]
-                            data[6] = temp
+                                    temp[j] = temp[j].split('→', 1)[1].strip()
+                                else:                                
+                                    temp[j] = temp[j].strip()
+                            award_program_data = temp
+                        elif '→' in vals[i]:
+                            award_program_data.append(vals[i].split('→',1)[1])
                         else:
-                            if '→' in vals[i]:
-                                vals[i] = vals[i].split('→',1)[1]
-                            data[6] = [vals[i]]
+                            award_program_data.append(vals[i])
                         
-                    # 7 : term
+                    # award_term_data : term
                     case s if s.startswith("Term:"):
-                        term = vals[i].split(',')
-                        data[7] = [i.strip() for i in term]
+                        award_term_data = [j.strip() for j in vals[i].split(',')]
                         
-                    # 8 : citizen_status
+                    # award_info_data_3 : citizen_status
                     case s if s.startswith("Citizenship:"):
                         if ',' in vals[i]:
-                            data[8] = 'both'
+                            award_info_data[3] = 'All Students'
                         else:
-                            data[8] = vals[i]
+                            award_info_data[3] = vals[i]
 
-                    # 9 : value_desc
+                    # award_info_data_4 : value_desc
                     case s if s.startswith("Value"):
-                        data[9] = vals[i]
+                        if (vals[i] and '$' in vals[i]):
+                            award_info_data[4] = vals[i][vals[i].find('$'):].split()[0]
+                        else:
+                            award_info_data[4] = vals[i]
 
-                    # 10 : award_desc
+                    # award_info_data_5 : award_desc
                     case s if s.startswith("Award description:"):
-                        data[10] = vals[i]
+                        award_info_data[5] = vals[i]
 
-                    # 11 : eligibility_selection
-                    case s if s.startswith("Eligibility & selection criteria:"):
-                        data[11] = vals[i]
-                
-                    case s if s.startswith("Application details:"):
-                        data[11] = vals[i]
+                    # award_info_data_6 : eligibility_selection
+                    case s if (s.startswith("Eligibility & selection criteria:") or s.startswith("Application details:")):
+                        if (not award_info_data[6] and vals[i]):
+                            award_info_data[6] = [j for j in raw_divs[i].get_text(', ', strip=True) if len(j) > 5]
 
             #insert into tables
-            print(data)
-            insert_term_table = '''
-                INSERT INTO results (LINK, AWARD_NAME, LEVEL, AWARD_TYPE, SELECTION, AFFILIATION, PROGRAM, TERM, CITIZEN_STATUS, VALUE_DESC, AWARD_DESC, ELIGIBILITY_SELECTION) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            insert_award_info = '''
+                INSERT INTO award_info (AWARD_NAME, LINK, SELECTION, CITIZEN_STATUS, VALUE_DESC, AWARD_DESC, ELIGIBILITY_SELECTION) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING AWARD_ID
             '''
-            cursor.execute(insert_term_table, data)
+            cursor.execute(insert_award_info, award_info_data)
+
+            # retrieve award_id
+            award_id = cursor.fetchone()[0]
+
+            if award_level_data:
+                award_level_data = [[award_id, i] for i in award_level_data]
+                insert_level_info = '''
+                    INSERT INTO award_level (AWARD_ID, AWARD_LEVEL) 
+                    VALUES (%s, %s)
+                '''
+                cursor.executemany(insert_level_info, award_level_data)
+
+            if award_type_data:
+                award_type_data = [[award_id, i] for i in award_type_data]
+                insert_type_info = '''
+                    INSERT INTO award_type (AWARD_ID, AWARD_TYPE) 
+                    VALUES (%s, %s)
+                '''
+                cursor.executemany(insert_type_info, award_type_data)
+
+            if award_affiliation_data:
+                award_affiliation_data = [[award_id, i] for i in award_affiliation_data]
+                insert_affiliation_info = '''
+                    INSERT INTO award_affiliation (AWARD_ID, AWARD_AFFILIATION) 
+                    VALUES (%s, %s)
+                '''
+                cursor.executemany(insert_affiliation_info, award_affiliation_data)
+
+            if award_program_data:
+                award_program_data = [[award_id, i] for i in set(award_program_data)]
+                insert_program_info = '''
+                    INSERT INTO award_program (AWARD_ID, AWARD_PROGRAM) 
+                    VALUES (%s, %s)
+                '''
+                cursor.executemany(insert_program_info, award_program_data)
+
+            if award_term_data:
+                award_term_data = [[award_id, i] for i in award_term_data]
+                insert_term_data = '''
+                    INSERT INTO award_term (AWARD_ID, AWARD_TERM) 
+                    VALUES (%s, %s)
+                '''
+                cursor.executemany(insert_term_data, award_term_data)
+            
             connection.commit()
 
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
-        return 0
+        connection.rollback()
+        abort(500)
     finally:
         if connection:
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
-            return 1
-
-if __name__ == "__main__":
-    scrape()
+            
+    return 'Success'

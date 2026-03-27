@@ -1,34 +1,133 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { useState, useEffect, useRef } from 'react'
+import TitleCard from './TitleCard'
+import TableResults from './TableResults'
+import Filter from './Filter'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [awards, setAwards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({ 
+    type: ['All'], 
+    level: ['All'], 
+    affiliation: ['All'], 
+    faculty: ['All'], 
+    program: ['All'], 
+    term: ['All'], 
+    citizenship: ['All']
+  });
+  const excelDownloadURL = useRef(null);
+  const tableRef = useRef(null);
+
+
+  const ingestAwards = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const res = await fetch('/bursary/ingest', {
+        method: 'POST'
+      });
+      if (!res.ok) throw new Error('Failed to Ingest');
+      const data = await res.json();
+      setAwards(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      fetchAwards();
+    }
+  };
+
+  const fetchAwards = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setAwards([]);
+      
+      const res = await fetch('/bursary/table', {
+        method: 'GET'
+      });
+
+      if (!res.ok) throw new Error('Failed to Search');
+      const data = await res.json();
+      setAwards(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      tableRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  
+  const queryAwards = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setAwards([]);
+
+      const res = await fetch('/bursary/search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({filters})
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setAwards(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const exportAwards = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch('/bursary/sheet', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({filters})
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob); 
+      excelDownloadURL.current.href = url;
+      excelDownloadURL.current.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);      
+      fetchAwards();
+    }
+  };
+
+  useEffect(() => {
+    fetchAwards()
+  }, [])
+
+  useEffect(() => {
+    if (awards.length > 0) {
+      tableRef.current?.scrollIntoView({behavior: 'smooth' });
+    }
+  }, [awards]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="min-h-screen bg-customblue-5 flex flex-col justify-center p-12 gap-5">
+        <TitleCard/>
+        <Filter filterUpdate={setFilters} fetchAwards={queryAwards} ingestAwards={ingestAwards} exportAwards={exportAwards}/>
+        <a ref={excelDownloadURL} download="bursary_web_scraper_results.xlsx" className="hidden"/>
+        <div ref={tableRef}>
+          <TableResults awards={awards} loading={loading} error={error}/>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
