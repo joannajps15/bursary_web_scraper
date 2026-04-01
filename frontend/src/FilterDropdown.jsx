@@ -30,7 +30,7 @@ function FilterDropdown({ label, name, options, selected, onChange }) {
         <button
             onClick={() => setOpen(openStatus => !openStatus)} //toggle open status 
             className="flex items-center justify-between gap-2 p-3.5 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15 transition-colors">
-            <span className="text-sm text-blue-100">{triggerText}</span>
+            <span className="w-25 truncate text-left text-sm text-blue-100">{triggerText}</span>
             <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 16 16" fill="none">
                 <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

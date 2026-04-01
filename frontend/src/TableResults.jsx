@@ -24,7 +24,7 @@ function TableResults({awards, loading, error}) {
     return (
         <div className="overflow-x-auto rounded-xl bg-customblue-4/20 p-7">
             {Array.isArray(visible) && visible.map((award, idx) => (
-                <TableAwardEntry data={award}
+                <TableAwardEntry idx={idx} data={award}
                 key={idx}>
                 </TableAwardEntry>
             ))}

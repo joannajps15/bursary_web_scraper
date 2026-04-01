@@ -56,7 +56,7 @@ def create_award_info_tables(cursor)->int:
             ('Mechatronics Engineering','Engineering'),
             ('Nanotechnology Engineering','Engineering'),
             ('Systems Design Engineering','Engineering'),
-            ('software Engineering','Engineering'),
+            ('Software Engineering','Engineering'),
             ('Climate and Environmental Change','Environment'),
             ('Environment and Business','Environment'),
             ('Environment, Resources and Sustainability','Environment'),

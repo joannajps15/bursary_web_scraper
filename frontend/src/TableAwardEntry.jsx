@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
-function TableAwardEntry({data}) {
+function TableAwardEntry({idx, data}) {
     const [open, setOpen] = useState(false);
 
     return (
         <div className="overflow-x-auto rounded-xl m-2 font-dm text-customblue-1">
-            <div className={data[0] % 2 === 0 ? 'bg-customblue-5 p-10 ' : 'bg-customblue-4/20 p-10'}>
+            <div className={idx % 2 === 0 ? 'bg-customblue-5 p-10 ' : 'bg-customblue-4/20 p-10'}>
                 {/* Trigger */}
                 <div className="mb-5 flex flex-wrap items-start" 
                     onClick={() => setOpen(openStatus => !openStatus)}>

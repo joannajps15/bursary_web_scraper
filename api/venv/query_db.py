@@ -57,12 +57,13 @@ def query_db(filters) -> str:
             if 'All' not in filters['faculty']:
                 program_query = '''
                     SELECT program from program 
-                    WHERE faculty = ANY(%s)
+                    WHERE program.faculty = ANY(%s)
                 '''
-                cursor.execute(program_query, filters['faculty'])
+                cursor.execute(program_query, [filters['faculty']])
                 program_result = cursor.fetchall() # list of programs corresponding to faculty
                 filters['program'].extend(program_result)
-            filters.pop('faculty')
+                filters['program'] = sorted(set(filters['program']))
+            del filters['faculty']
 
             # 1:many db award_id aggregation
             keys = list(filters.keys())

@@ -2,21 +2,27 @@ import { useState } from 'react'
 import FilterDropdown from './FilterDropdown'
 import {TYPE, LEVEL, AFFILIATION, FACULTY, PROGRAM, TERM, CITIZENSHIP} from './constants'
 
-function Filter({filterUpdate, fetchAwards, ingestAwards, exportAwards}) {
-  const [filters, setFilters] = useState({ 
-    type: ['All'], 
-    level: ['All'], 
-    affiliation: ['All'], 
-    faculty: ['All'], 
-    program: ['All'], 
-    term: ['All'], 
-    citizenship: ['All']
-  });
+function Filter({filters, setFilters, fetchAwards, exportAwards}) {
 
   function handleChange(change) {
-    const updated = { ...filters, [change.name]: change.selected };
+    let updated = { ...filters, [change.name]: change.selected };
     setFilters(updated);
-    filterUpdate(updated);
+  }
+
+  function clearFilters(){
+    let updated = {...filters};
+    for (let filter in updated) updated[filter].push('All');
+    setFilters(updated);
+  }
+
+  function normalizeFilters () {
+    let updated = {...filters};
+    for (let filter in updated) {
+      if (updated[filter]?.length === 0) {
+        updated[filter].push('All');
+      }
+    }
+    setFilters(updated);
   }
 
   return (
@@ -34,8 +40,8 @@ function Filter({filterUpdate, fetchAwards, ingestAwards, exportAwards}) {
       <div className="flex justify-around gap-5">
         <div className="group relative m-5 flex justify-center">
           <button className="font-syne text-customblue-5 text-sm rounded-full mb-5 border border-customblue-5/20 p-5 bg-customblue-4 grow"
-          onClick={fetchAwards}>
-              Fetch Awards
+          onClick={() => {normalizeFilters(); fetchAwards();}}>
+            Fetch Awards
           </button>
           <span className="absolute top-12 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
             Select filters and load related awards
@@ -44,10 +50,12 @@ function Filter({filterUpdate, fetchAwards, ingestAwards, exportAwards}) {
 
         <div className="group relative m-5 flex justify-center">
           <button className="font-syne text-customblue-5 text-sm rounded-full mb-5 border border-customblue-5/20 p-5 bg-customblue-4 grow"
-          onClick={ingestAwards}>
-              Refresh Award Data
+          onClick={() => {clearFilters(); fetchAwards();}}>
+            Clear Filters
           </button>
-          <span className="absolute top-12 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">Reingest and rescrape all award data</span>
+          <span className="absolute top-12 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+            Clear Filters to Default Values
+          </span>
         </div>
 
         <div className="group relative m-5 flex justify-center">

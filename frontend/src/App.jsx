@@ -19,25 +19,24 @@ function App() {
   const excelDownloadURL = useRef(null);
   const tableRef = useRef(null);
 
-
-  const ingestAwards = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // const ingestAwards = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
       
-      const res = await fetch('/bursary/ingest', {
-        method: 'POST'
-      });
-      if (!res.ok) throw new Error('Failed to Ingest');
-      const data = await res.json();
-      setAwards(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-      fetchAwards();
-    }
-  };
+  //     const res = await fetch('/bursary/ingest', {
+  //       method: 'POST'
+  //     });
+  //     if (!res.ok) throw new Error('Failed to Ingest');
+  //     const data = await res.json();
+  //     setAwards(data);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //     fetchAwards();
+  //   }
+  // };
 
   const fetchAwards = async () => {
     try {
@@ -59,7 +58,6 @@ function App() {
       tableRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
   
   const queryAwards = async () => {
     try {
@@ -122,7 +120,7 @@ function App() {
     <>
       <div className="min-h-screen bg-customblue-5 flex flex-col justify-center p-12 gap-5">
         <TitleCard/>
-        <Filter filterUpdate={setFilters} fetchAwards={queryAwards} ingestAwards={ingestAwards} exportAwards={exportAwards}/>
+        <Filter filters={filters} setFilters={setFilters} fetchAwards={queryAwards} exportAwards={exportAwards}/>
         <a ref={excelDownloadURL} download="bursary_web_scraper_results.xlsx" className="hidden"/>
         <div ref={tableRef}>
           <TableResults awards={awards} loading={loading} error={error}/>

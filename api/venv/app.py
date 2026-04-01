@@ -16,7 +16,7 @@ cursor = None
 
 app = Flask(__name__)
 
-# ingest API - to define new awards
+# ingest API - to define new awards, should be run routinely
 # creates tables and scrapes
 @app.route('/bursary/ingest', methods=['POST'])
 def bursary_ingest():
@@ -38,8 +38,13 @@ def bursary_search():
         req_data = request.get_json()['filters']
         if all(v == ['All'] for v in req_data.values()):
             return query_db(None)
-        if req_data['citizenship'] is not ['All']:
+        if 'All' not in req_data['citizenship']:
             req_data['citizenship'].append('All Students') # add all because citizenship has 1:1 matching
+        if 'All' in req_data['program']:
+            if 'All' in req_data['faculty']:
+                req_data['program'].append('Open to any program')
+            else:
+                req_data['program'].remove('All')
         return query_db(req_data)
     abort(400) 
 
