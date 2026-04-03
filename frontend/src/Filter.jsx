@@ -11,7 +11,7 @@ function Filter({filters, setFilters, fetchAwards, exportAwards}) {
 
   function clearFilters(){
     let updated = {...filters};
-    for (let filter in updated) updated[filter].push('All');
+    for (let filter in updated) updated[filter] = ['All'];
     setFilters(updated);
   }
 

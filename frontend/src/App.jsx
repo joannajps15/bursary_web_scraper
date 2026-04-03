@@ -19,25 +19,6 @@ function App() {
   const excelDownloadURL = useRef(null);
   const tableRef = useRef(null);
 
-  // const ingestAwards = async () => {
-  //   try {
-  //     setLoading(true);
-  //     setError(null);
-      
-  //     const res = await fetch('/bursary/ingest', {
-  //       method: 'POST'
-  //     });
-  //     if (!res.ok) throw new Error('Failed to Ingest');
-  //     const data = await res.json();
-  //     setAwards(data);
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //     fetchAwards();
-  //   }
-  // };
-
   const fetchAwards = async () => {
     try {
       setLoading(true);
