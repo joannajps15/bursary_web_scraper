@@ -16,9 +16,10 @@ app = Flask(__name__)
 
 # ingest API - to define new awards, should be run routinely
 # creates tables and scrapes
-scheduler = BackgroundScheduler()
-scheduler.add_job(scrape, 'cron', day=1, hour=0)
-scheduler.start()
+# scrape() # run once on start
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(scrape, 'cron', day=1, hour=0) # reschedule monthly
+# scheduler.start()
 
 # defacto table display 
 @app.route('/bursary/table', methods=['GET'])
