@@ -1,5 +1,4 @@
 # environment variables
-.env
 **/.env
 
 # frontend
@@ -9,14 +8,12 @@ frontend/dist-ssr/
 *.local
 
 # logs
-*.log
-*debug.log*
-*error.log*
+**/*.log
 
 # python
-__pycache__/
-*.pyc
-*.pyo
+api/**/__pycache__/
+api/**/*.pyc
+api/**/*.pyo
 api/venv/
 
 # editor

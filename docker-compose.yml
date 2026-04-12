@@ -2,12 +2,16 @@
 
 services:
   flask:
-    build: ./api
+    build:
+      context: ./api
+      dockerfile: Dockerfile.flask
     expose:
       - "5000"
 
   nginx:
-    build: ./nginx
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.nginx
     ports:
       - "80:80"
       - "443:443" 
