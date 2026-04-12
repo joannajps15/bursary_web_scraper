@@ -1,0 +1,11 @@
+APScheduler
+beautifulsoup4
+Flask
+Flask-SocketIO
+gevent
+gevent-websocket
+gunicorn
+psycopg2-binary
+python-dotenv
+requests
+xlsxwriter
