@@ -1,4 +1,8 @@
-APScheduler==3.11.2
+aiohappyeyeballs==2.6.1
+aiohttp==3.13.5
+aiosignal==1.4.0
+apscheduler==3.11.2
+attrs==26.1.0
 beautifulsoup4==4.14.3
 bidict==0.23.1
 blinker==1.9.0
