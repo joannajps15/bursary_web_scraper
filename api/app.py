@@ -18,14 +18,14 @@ app.socketio = SocketIO(app, cors_allowed_origins="*")
 # --- API Calls ---
 
 # defacto table display 
-@app.route('/bursary/table', methods=['GET'])
+@app.route('/table', methods=['GET'])
 def bursary_display():
     if request.method == "GET":
         return query_db(None)
     abort(400) 
 
 # search API - to query the results db
-@app.route('/bursary/search', methods=['POST'])
+@app.route('/search', methods=['POST'])
 def bursary_search():
     if request.method == "POST":
         req_data = request.get_json()['filters']
@@ -42,7 +42,7 @@ def bursary_search():
     abort(400) 
 
 # spreadsheet API - return a spreadsheet with queried data info
-@app.route('/bursary/sheet', methods=['POST'])
+@app.route('/sheet', methods=['POST'])
 def bursary_sheet():
     if request.method == "POST":
         res = []
