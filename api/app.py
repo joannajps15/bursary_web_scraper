@@ -1,7 +1,6 @@
 from flask import Flask, request, abort, send_file
 from flask_socketio import SocketIO
 from werkzeug.middleware.proxy_fix import ProxyFix
-from dotenv import load_dotenv
 
 from routes.create_award_info_tables import *
 from routes.scrape import *
@@ -15,7 +14,6 @@ cursor = None
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.socketio = SocketIO(app, cors_allowed_origins="*")
-load_dotenv() 
 
 # --- API Calls ---
 
