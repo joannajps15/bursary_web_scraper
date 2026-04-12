@@ -1,4 +1,21 @@
-def create_award_info_tables(cursor)->int:
+import psycopg2
+import os
+from flask import abort
+
+def create_award_info_tables():
+    connection = None
+    cursor = None
+
+    try:
+        #connect to db
+        connection = psycopg2.connect(user=os.environ.get('USER'),
+                                    password=os.environ.get('PASSWORD'),
+                                    host=os.environ.get('HOST'),
+                                    port=os.environ.get('PORT'),
+                                    database=os.environ.get('DATABASE'))    
+
+        cursor = connection.cursor()
+
         #PROGRAM--------------------------------------------------
         drop_program_table = '''
             DROP TABLE IF EXISTS program CASCADE;
@@ -119,3 +136,12 @@ def create_award_info_tables(cursor)->int:
             ON CONFLICT (PROGRAM, FACULTY) DO NOTHING
         '''
         cursor.executemany(insert_program_table, programs)
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+        connection.rollback()
+        abort(500)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")

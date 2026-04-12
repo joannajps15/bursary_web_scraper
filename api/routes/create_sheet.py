@@ -1,8 +1,5 @@
-#Libraries
-import requests
 import xlsxwriter
 
-#Main method
 def create_sheet(buffer, data):
     # create workbook, worksheet
     workbook = xlsxwriter.Workbook(buffer)

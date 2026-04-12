@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { io } from 'socket.io-client'
 import TitleCard from './TitleCard'
 import TableResults from './TableResults'
 import Filter from './Filter'
@@ -18,6 +19,8 @@ function App() {
   });
   const excelDownloadURL = useRef(null);
   const tableRef = useRef(null);
+  const socket = io('https://yourdomain.com/ws')
+  const [scrapeStatus, setScrapeStatus] = useState('false');
 
   const fetchAwards = async () => {
     try {
@@ -96,6 +99,22 @@ function App() {
       tableRef.current?.scrollIntoView({behavior: 'smooth' });
     }
   }, [awards]);
+
+  useEffect(() => {
+    socket.on('scrape_status', (data) => {
+      setScrapeStatus(data.status) //update status
+      switch (scrapeStatus) {
+        case 'true':
+          setLoading(true)
+        case 'false':
+          setLoading(false)
+          fetchAwards();
+        case 'error':
+          setError('Error with CRON Job, Contact Administration for support')
+      }
+    }) 
+    return () => socket.off('scrape_status')
+  }, [])
 
   return (
     <>

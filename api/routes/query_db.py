@@ -1,14 +1,9 @@
 #Libraries
 import psycopg2
-from psycopg2 import Error
+import os
 from flask import abort
-from routes.create_scrape_result_tables import *
 
-connection = None
-cursor = None
-
-
-def query_db(filters) -> str:
+def query_db(filters)->str:
 
     connection = None
     cursor = None
@@ -16,11 +11,11 @@ def query_db(filters) -> str:
 
     try:
         #connect to db
-        connection = psycopg2.connect(user="postgres",
-                                    password="postGres#321",
-                                    host="127.0.0.1",
-                                    port="5432",
-                                    database="web_scraper_db")    
+        connection = psycopg2.connect(user=os.environ.get('USER'),
+                                    password=os.environ.get('PASSWORD'),
+                                    host=os.environ.get('HOST'),
+                                    port=os.environ.get('PORT'),
+                                    database=os.environ.get('DATABASE'))    
 
         cursor = connection.cursor()
 

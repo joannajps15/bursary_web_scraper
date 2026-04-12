@@ -1,0 +1,17 @@
+# docker-compose
+
+services:
+  flask:
+    build: ./api
+    expose:
+      - "5000"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443" 
+    volumes:
+      - /etc/letsencrypt:/etc/nginx/certs:ro
+    depends_on:
+      - flask

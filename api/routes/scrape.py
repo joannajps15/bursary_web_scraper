@@ -1,21 +1,12 @@
-#Libraries
-import requests
-from bs4 import BeautifulSoup
-
-import psycopg2
-from psycopg2 import Error
-
 from flask import abort
-
-from routes.create_scrape_result_tables import *
-from routes.create_award_info_tables import *
-
+from bs4 import BeautifulSoup
+import psycopg2
+import requests
 import aiohttp
 import asyncio
+import os
 
-
-connection = None
-cursor = None
+from routes.create_scrape_result_tables import *
 
 # fetch all 700 pages concurrently
 async def fetch_all(urls):
@@ -29,7 +20,7 @@ async def fetch_all(urls):
         return await asyncio.gather(*tasks)
 
 
-def scrape() -> str:
+def scrape()->str:
 
     #initialize variables
     URL = "https://uwaterloo.ca/student-awards-financial-aid/awards/search-results?level=All&type=All&process=All&affiliation=All&program=All&term=All&citizenship=All&keyword="
@@ -66,17 +57,16 @@ def scrape() -> str:
 
     try:
         #connect to db
-        connection = psycopg2.connect(user="postgres",
-                                    password="postGres#321",
-                                    host="127.0.0.1",
-                                    port="5432",
-                                    database="web_scraper_db")    
+        connection = psycopg2.connect(user=os.environ.get('USER'),
+                                    password=os.environ.get('PASSWORD'),
+                                    host=os.environ.get('HOST'),
+                                    port=os.environ.get('PORT'),
+                                    database=os.environ.get('DATABASE'))    
 
         cursor = connection.cursor()
 
         #create tables
-        if not (create_award_info_tables(cursor) and create_scrape_result_tables(cursor)):
-            abort(500)
+        create_scrape_result_tables(cursor)
 
         for (one, link) in zip(soups, parsed_pages):
             # create beautifulsoup object and access all div's with class = field-item even
@@ -228,6 +218,3 @@ def scrape() -> str:
             print("PostgreSQL connection is closed")
             
     return 'Success'
-
-if __name__ == "__main__":
-    scrape()
