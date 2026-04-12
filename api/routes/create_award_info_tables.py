@@ -1,6 +1,8 @@
+from psycopg2 import Error
+from flask import abort
+
 import psycopg2
 import os
-from flask import abort
 
 def create_award_info_tables():
     connection = None

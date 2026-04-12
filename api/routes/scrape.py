@@ -1,6 +1,8 @@
 from flask import abort
 from bs4 import BeautifulSoup
 from gevent.pool import Pool
+from psycopg2 import Error
+
 import psycopg2
 import requests
 import os
