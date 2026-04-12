@@ -1,24 +1,16 @@
 from flask import abort
 from bs4 import BeautifulSoup
+from gevent.pool import Pool
 import psycopg2
 import requests
-import aiohttp
-import asyncio
 import os
 
 from routes.create_scrape_result_tables import *
 
 # fetch all 700 pages concurrently
-async def fetch_all(urls):
-    async with aiohttp.ClientSession() as session:
-        async def fetch(url):
-            async with session.get(url) as response:
-                html = await response.read()
-                return BeautifulSoup(html, 'html.parser')
-        
-        tasks = [fetch(url) for url in urls]
-        return await asyncio.gather(*tasks)
-
+def fetch_all(urls):
+    pool = Pool(25)
+    return pool.map(lambda url: BeautifulSoup(requests.get(url).content, 'html.parser'), urls)
 
 def scrape()->str:
 
@@ -50,7 +42,7 @@ def scrape()->str:
     #iterates through all links and checks if awards apply to user based on specific criteria
     
     #fetch all 700 pages concurrently
-    parsed_pages = asyncio.run(fetch_all(soups))  # all 700 fetched concurrently
+    parsed_pages = fetch_all(soups)
 
     connection = None
     cursor = None
