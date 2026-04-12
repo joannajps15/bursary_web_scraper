@@ -2,6 +2,7 @@
 **/.env
 
 # frontend
+yarn.lock
 frontend/node_modules/
 frontend/dist/
 frontend/dist-ssr/

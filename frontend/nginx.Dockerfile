@@ -6,9 +6,9 @@ WORKDIR /app
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 
-RUN yarn install
+RUN npm install
 COPY . .
-RUN yarn build
+RUN npm run build
 
 # Stage 2: Setup Reverse Proxy nginx
 FROM nginx:alpine
