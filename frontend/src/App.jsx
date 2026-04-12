@@ -19,7 +19,7 @@ function App() {
   });
   const excelDownloadURL = useRef(null);
   const tableRef = useRef(null);
-  const socket = io('https://yourdomain.com/ws')
+  const socket = io('http://35.182.227.64/ws')
   const [scrapeStatus, setScrapeStatus] = useState('false');
 
   const fetchAwards = async () => {
