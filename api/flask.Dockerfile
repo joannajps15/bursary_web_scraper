@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # run guincorn on port 5000, with gunicorn socket
-CMD ["gunicorn", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "app:app"]
