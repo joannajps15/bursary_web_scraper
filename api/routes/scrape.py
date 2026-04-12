@@ -49,11 +49,11 @@ def scrape()->str:
 
     try:
         #connect to db
-        connection = psycopg2.connect(user=os.environ.get('USER'),
-                                    password=os.environ.get('PASSWORD'),
-                                    host=os.environ.get('HOST'),
-                                    port=os.environ.get('PORT'),
-                                    database=os.environ.get('DATABASE'))    
+        connection = psycopg2.connect(user=os.environ.get('DB_USER'),
+                                    password=os.environ.get('DB_PASSWORD'),
+                                    host=os.environ.get('DB_HOST'),
+                                    port=os.environ.get('DB_PORT'),
+                                    database=os.environ.get('DB_NAME'))    
 
         cursor = connection.cursor()
 
