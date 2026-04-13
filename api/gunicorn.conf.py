@@ -1,8 +1,11 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timezone
+
 import logging
+
 from app import app, scrape
-from routes import create_award_info_tables, create_scrape_result_tables
+from routes.create_award_info_tables import *
+from routes.create_scrape_result_tables import *
 
 worker_class = 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker'
 workers = 1
