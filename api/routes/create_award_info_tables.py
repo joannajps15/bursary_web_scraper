@@ -138,6 +138,7 @@ def create_award_info_tables():
             ON CONFLICT (PROGRAM, FACULTY) DO NOTHING
         '''
         cursor.executemany(insert_program_table, programs)
+        connection.commit()
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
         connection.rollback()

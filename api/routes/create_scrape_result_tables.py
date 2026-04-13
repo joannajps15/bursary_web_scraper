@@ -129,6 +129,7 @@ def create_scrape_result_tables():
             );
         '''
         cursor.execute(create_award_term_table)
+        connection.commit()
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
         connection.rollback()
