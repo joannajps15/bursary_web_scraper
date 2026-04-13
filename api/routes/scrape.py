@@ -7,7 +7,7 @@ import psycopg2
 import requests
 import os
 
-from routes.create_scrape_result_tables import *
+from routes.update_scrape_result_tables import *
 
 # fetch all 700 pages concurrently
 def fetch_all(urls):
@@ -60,7 +60,7 @@ def scrape()->str:
         cursor = connection.cursor()
 
         #create tables
-        create_scrape_result_tables(cursor)
+        update_scrape_result_tables(cursor)
 
         for (one, link) in zip(soups, parsed_pages):
             # create beautifulsoup object and access all div's with class = field-item even

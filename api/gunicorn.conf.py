@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timezone
 import logging
-from app import app, scrape, create_award_info_tables
+from app import app, scrape, create_award_info_tables, create_scrape_result_tables
 
 worker_class = 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker'
 workers = 1
@@ -20,6 +20,7 @@ def on_starting(server):
         with app.app_context():
             try:
                 create_award_info_tables() #ingest program-faculty table on start
+                create_scrape_result_tables() # create tables for scraped data on start
                 scrape() # run once on start
             except Exception as e:
                 app.logger.error("Error during startup setup:", e)
