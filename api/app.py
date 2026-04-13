@@ -4,7 +4,6 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 import logging
 
-from routes.create_award_info_tables import *
 from routes.scrape import *
 from routes.query_db import *
 from routes.create_sheet import *
