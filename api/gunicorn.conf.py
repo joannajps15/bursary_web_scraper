@@ -13,7 +13,7 @@ bind = '0.0.0.0:5000'
 keepalive = 65
 
 logger = logging.getLogger('gunicorn.error')
-scheduler=None
+scheduler = None
 
 # run functions on server start and exit through gunicorn master process
 def on_starting(server):
@@ -24,10 +24,13 @@ def on_starting(server):
         with app.app_context():
             try:
                 create_award_info_tables() #ingest program-faculty table on start
+                logger.info("Program-faculty tables created successfully.")
                 create_scrape_result_tables() # create tables for scraped data on start
+                logger.info("Scrape result tables created successfully.")
+                logger.info("Running initial scrape on startup...")
                 scrape() # run once on start
             except Exception as e:
-                app.logger.error("Error during startup setup:", e)
+                logger.error("Error during startup setup:", e)
 
     def scrape_job():
         with app.app_context():
