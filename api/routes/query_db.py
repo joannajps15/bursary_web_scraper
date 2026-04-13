@@ -56,7 +56,7 @@ def query_db(filters)->str:
                     WHERE program.faculty = ANY(%s)
                 '''
                 cursor.execute(program_query, [filters['faculty']])
-                program_result = cursor.fetchall() # list of programs corresponding to faculty
+                program_result = [row[0] for row in cursor.fetchall()] # list of programs corresponding to faculty
                 filters['program'].extend(program_result)
                 filters['program'] = sorted(set(filters['program']))
             del filters['faculty']
