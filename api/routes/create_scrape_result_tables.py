@@ -20,7 +20,7 @@ def create_scrape_result_tables():
 
         #AWARD_INFO--------------------------------------------------
         drop_award_info_table = '''
-            DROP TABLE IF EXISTS award_info RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_info CASCADE;
         '''
         cursor.execute(drop_award_info_table)
 
@@ -40,7 +40,7 @@ def create_scrape_result_tables():
 
         #LEVELS--------------------------------------------------
         drop_award_level_table = '''
-            DROP TABLE IF EXISTS award_level RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_level CASCADE;
         '''
         cursor.execute(drop_award_level_table)
 
@@ -58,7 +58,7 @@ def create_scrape_result_tables():
 
         #AWARD_TYPE--------------------------------------------------
         drop_award_type_table = '''
-            DROP TABLE IF EXISTS award_type RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_type CASCADE;
         '''
         cursor.execute(drop_award_type_table)
 
@@ -77,7 +77,7 @@ def create_scrape_result_tables():
         
         #AFFILIATION--------------------------------------------------
         drop_award_affiliation_table = '''
-            DROP TABLE IF EXISTS award_affiliation RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_affiliation CASCADE;
         '''
         cursor.execute(drop_award_affiliation_table)
 
@@ -95,7 +95,7 @@ def create_scrape_result_tables():
 
         #PROGRAM--------------------------------------------------
         drop_award_program_table = '''
-            DROP TABLE IF EXISTS award_program RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_program CASCADE;
         '''
         cursor.execute(drop_award_program_table)
 
@@ -114,7 +114,7 @@ def create_scrape_result_tables():
 
         #TERM--------------------------------------------------
         drop_award_term_table = '''
-            DROP TABLE IF EXISTS award_term RESTART IDENTITY CASCADE;
+            DROP TABLE IF EXISTS award_term CASCADE;
         '''
         cursor.execute(drop_award_term_table)
 
