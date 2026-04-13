@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timezone
-
+import logging
 from app import app, scrape, create_award_info_tables
 
 worker_class = 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker'
@@ -8,6 +8,7 @@ workers = 1
 bind = '0.0.0.0:5000'
 keepalive = 65
 
+logger = logging.getLogger('gunicorn.error')
 scheduler=None
 
 # run functions on server start and exit through gunicorn master process
@@ -32,8 +33,9 @@ def on_starting(server):
             except Exception as e:
                 app.socketio.emit('scrape_status', {'status': 'error'})
     
+    logging.info("Starting server and running startup setup...")
     on_startup_setup()
-    
+    logging.info("Startup setup completed. Server is ready to accept requests.")   
 
     # scrape cron job
     scheduler = BackgroundScheduler(timezone=timezone.utc)
