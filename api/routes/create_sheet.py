@@ -24,25 +24,27 @@ def create_sheet(buffer, data):
     worksheet.write("K1", "Citizenship", header_format)
 
     colInd = 0
+    printRowIndex = 0
 
     for row in data:
         rowInd = row[0]+1
         row = ["" if i is None else i for i in row]
         if row[2]:
-            worksheet.write_url(rowInd, colInd, row[2], string=row[1]) #award name and link
+            worksheet.write_url(printRowIndex, colInd, row[2], string=row[1]) #award name and link
         else:
-            worksheet.write(rowInd, colInd, row[1]) #award name
-        worksheet.write(rowInd, colInd+1, row[5]) #award value
-        worksheet.write(rowInd, colInd+2, ', '.join(filter(None, row[9]))) #[award type]
-        worksheet.write(rowInd, colInd+3, row[6]) #award description
+            worksheet.write(printRowIndex, colInd, row[1]) #award name
+        worksheet.write(printRowIndex, colInd+1, row[5]) #award value
+        worksheet.write(printRowIndex, colInd+2, ', '.join(filter(None, row[9]))) #[award type]
+        worksheet.write(printRowIndex, colInd+3, row[6]) #award description
 
-        worksheet.write(rowInd, colInd+4, row[3]) #award selection
-        worksheet.write(rowInd, colInd+5, row[7]) #selection eligibility
-        worksheet.write(rowInd, colInd+6, ', '.join(filter(None, row[12]))) #[affiliation]
-        worksheet.write(rowInd, colInd+7, ', '.join(filter(None, row[11]))) #[term]
-        worksheet.write(rowInd, colInd+8, ', '.join(filter(None, row[8]))) #[levels]
-        worksheet.write(rowInd, colInd+9, ', '.join(filter(None, row[10]))) #[programs]
-        worksheet.write(rowInd, colInd+10, row[4]) #citizenship
+        worksheet.write(printRowIndex, colInd+4, row[3]) #award selection
+        worksheet.write(printRowIndex, colInd+5, row[7]) #selection eligibility
+        worksheet.write(printRowIndex, colInd+6, ', '.join(filter(None, row[12]))) #[affiliation]
+        worksheet.write(printRowIndex, colInd+7, ', '.join(filter(None, row[11]))) #[term]
+        worksheet.write(printRowIndex, colInd+8, ', '.join(filter(None, row[8]))) #[levels]
+        worksheet.write(printRowIndex, colInd+9, ', '.join(filter(None, row[10]))) #[programs]
+        worksheet.write(printRowIndex, colInd+10, row[4]) #citizenship
+        printRowIndex += 1
 
     workbook.close()
     return workbook
