@@ -80,7 +80,7 @@
     'Mechatronics Engineering',
     'Nanotechnology Engineering',
     'Systems Design Engineering',
-    'software Engineering',
+    'Software Engineering',
     'Climate and Environmental Change',
     'Environment and Business',
     'Environment, Resources and Sustainability',

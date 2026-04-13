@@ -3,6 +3,7 @@ from flask_socketio import SocketIO
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import logging
+import io
 
 from routes.scrape import *
 from routes.query_db import *
