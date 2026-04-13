@@ -1,8 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timezone
 
-import threading
-
 from app import app, scrape, create_award_info_tables
 
 worker_class = 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker'
@@ -35,6 +33,7 @@ def on_starting(server):
                 app.socketio.emit('scrape_status', {'status': 'error'})
     
     on_startup_setup()
+    
 
     # scrape cron job
     scheduler = BackgroundScheduler(timezone=timezone.utc)

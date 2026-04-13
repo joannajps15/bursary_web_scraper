@@ -2,6 +2,8 @@ from flask import Flask, request, abort, send_file
 from flask_socketio import SocketIO
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+import logging
+
 from routes.create_award_info_tables import *
 from routes.scrape import *
 from routes.query_db import *
@@ -14,12 +16,14 @@ cursor = None
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.socketio = SocketIO(app, cors_allowed_origins="*")
+logger = logging.getLogger('gunicorn.error')
 
 # --- API Calls ---
 
 # defacto table display 
 @app.route('/table', methods=['GET'])
 def bursary_display():
+    logger.info("Received request for /table endpoint")
     if request.method == "GET":
         return query_db(None)
     abort(400) 
@@ -27,6 +31,7 @@ def bursary_display():
 # search API - to query the results db
 @app.route('/search', methods=['POST'])
 def bursary_search():
+    logger.info("Received request for /search endpoint")
     if request.method == "POST":
         req_data = request.get_json()['filters']
         if all(v == ['All'] for v in req_data.values()):
@@ -44,6 +49,7 @@ def bursary_search():
 # spreadsheet API - return a spreadsheet with queried data info
 @app.route('/sheet', methods=['POST'])
 def bursary_sheet():
+    logger.info("Received request for /sheet endpoint")
     if request.method == "POST":
         res = []
 
