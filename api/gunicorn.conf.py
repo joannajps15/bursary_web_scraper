@@ -1,4 +1,3 @@
-from api.routes import create_award_info_tables
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import timezone
 import logging
