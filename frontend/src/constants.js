@@ -137,5 +137,5 @@
 
   export const TERM = ['Winter', 'Spring', 'Fall']
 
-  export const CITIZENSHIP = ['Canadian citizen/permanent resident', 'International/study permit student', 'All Students']
+  export const CITIZENSHIP = ['Canadian citizen/permanent resident', 'International/study permit student']
   
