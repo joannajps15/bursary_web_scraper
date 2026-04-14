@@ -59,10 +59,12 @@ def query_db(filters)->str:
                 program_result = [row[0] for row in cursor.fetchall()] # list of programs corresponding to faculty
                 filters['program'].extend(program_result)
                 filters['program'] = sorted(set(filters['program']))
+            del filters['faculty']
 
             # 1:many db award_id aggregation
-            keys = [k for k in filters.keys() if k != 'faculty']
+            keys = list(filters.keys())
             award_tables = ['award_type', 'award_level', 'award_affiliation', 'award_program', 'award_term', 'award_info']
+            award_columns = ['award_type', 'award_level', 'award_affiliation', 'award_program', 'award_term', 'citizen_status']
             params = []
             filter_id_query = ""
 
@@ -70,7 +72,7 @@ def query_db(filters)->str:
                 if 'All' not in filters[keys[i]]:
                     if len(filter_id_query) > 0: filter_id_query += " UNION "
                     filter_id_query += "SELECT DISTINCT award_id FROM " + award_tables[i]
-                    filter_id_query += " WHERE " + award_tables[i] + " = ANY (%s)"
+                    filter_id_query += " WHERE " + award_columns[i] + " = ANY (%s)"
                     params.append(filters[keys[i]])       
 
             #2:left-join on results            
