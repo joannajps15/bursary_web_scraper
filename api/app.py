@@ -43,6 +43,7 @@ def bursary_search():
                 req_data['program'].append('Open to any program')
             else:
                 req_data['program'].remove('All')
+        logger.info(f"Filters received: {req_data}")
         return query_db(req_data)
     abort(400) 
 

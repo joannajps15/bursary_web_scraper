@@ -19,7 +19,7 @@ function App() {
   });
   const excelDownloadURL = useRef(null);
   const tableRef = useRef(null);
-  const socket = io('https://uwaterloobursary.app/ws')
+  const socket = io('https://www.uwaterloobursary.app')
   const [scrapeStatus, setScrapeStatus] = useState('false');
 
   const fetchAwards = async () => {
