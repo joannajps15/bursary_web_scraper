@@ -3,7 +3,7 @@
 Web-scraper and search tool for university awards. Filters awards and exports to Excel
 
 **Awards Source**
-Waterloo SAFA Undergraduate Awards Database (https://uwaterloo.ca/student-awards-financial-aid/awards/database)
+- Waterloo SAFA Undergraduate Awards Database (https://uwaterloo.ca/student-awards-financial-aid/awards/database)
 
 **Live Website**
 - https://www.uwaterloobursary.app/ (_Live with domain until March 28, 2027_)
