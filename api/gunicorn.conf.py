@@ -1,4 +1,4 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.gevent import GeventScheduler
 from datetime import timezone
 
 import logging
@@ -39,14 +39,15 @@ def on_starting(server):
                 scrape()
                 app.socketio.emit('scrape_status', {'status': 'false'})
             except Exception as e:
+                logger.error("scrape_job failed: %s", e, exc_info=True)
                 app.socketio.emit('scrape_status', {'status': 'error'})
     
-    logging.info("Starting server and running startup setup...")
+    logger.info("Starting server and running startup setup...")
     on_startup_setup()
-    logging.info("Startup setup completed. Server is ready to accept requests.")   
+    logger.info("Startup setup completed. Server is ready to accept requests.")   
 
     # scrape cron job
-    scheduler = BackgroundScheduler(timezone=timezone.utc)
+    scheduler = GeventScheduler(timezone=timezone.utc)
     scheduler.add_job(scrape_job, 'cron', day=1, hour=0) # reschedule monthly
     scheduler.start()
 
